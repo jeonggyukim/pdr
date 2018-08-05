@@ -2,12 +2,19 @@
 
 import numpy as np
 import os
+import socket
 import subprocess
 import time
 
 #read KLM.in file
 
-cvode_dir  = "/usr/local/sundials"
+host = socket.gethostname()
+
+if 'jgkim-astro' in host:
+    cvode_dir  = "/home/jgkim/Documents/sundials/cvode"
+elif 'jeonggyu.local' in host:
+    cvode_dir = "/Users/jgkim/Documents/sundials/cvode"
+    
 input_file = "examples.in"
 dir_out = os.path.dirname(os.getcwd()) + "/"
 

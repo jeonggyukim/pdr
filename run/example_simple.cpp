@@ -8,6 +8,8 @@
 #include "slab.h"
 #include "math.h"
 #include <stdio.h>
+#include <unistd.h>
+#include <limits.h>
 
 int main() {
   NL99p odeNL99;
@@ -57,9 +59,12 @@ int main() {
 	//const double nH2G0 = 94. / ( 1. + 3.1*pow(Zdg, 0.365) ); /*nH/G0 constant in CNM*/
 	long int slab_id = 0;
   //output directory. Note this should be the same as that in examples.in
-	const char dir[] 
-	 =
-   "/Users/munangong/chemistry_Athena/PDR_cvode/out_example_simple/";
+	char dir[PATH_MAX];
+	if (getcwd(dir, sizeof(dir)) != NULL) {
+	  //printf("Current directory: %s\n", dir);
+	}
+	sprintf(dir, "%s/../out_example_simple/", dir);
+
 	char fn_nH[100];  
   sprintf(fn_nH, "%snH_arr.dat", dir);
 	char fn_colH[100];  
