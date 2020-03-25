@@ -53,6 +53,26 @@ class SlabOut:
             self.NH = np.linspace(0, self.NH_total, self.ngrid)
         else:
             self.NH = np.loadtxt(dir_out+"colH_arr.dat")
+
+        G_CO_arr = []
+        G_H2_arr = []
+        G_CI_arr = []
+        G_PE_arr = []
+        for islab in np.arange(self.nslab):
+            fn_slab = dir_out + "G_CO" + ("%06d" % islab) + ".dat"
+            G_CO_arr.append(np.loadtxt(fn_slab))
+            fn_slab = dir_out + "G_CI" + ("%06d" % islab) + ".dat"
+            G_CI_arr.append(np.loadtxt(fn_slab))
+            fn_slab = dir_out + "G_H2" + ("%06d" % islab) + ".dat"
+            G_H2_arr.append(np.loadtxt(fn_slab))
+            fn_slab = dir_out + "G_PE" + ("%06d" % islab) + ".dat"
+            G_PE_arr.append(np.loadtxt(fn_slab))
+            
+        self.G_H2 = np.array(G_H2_arr)
+        self.G_CO = np.array(G_CO_arr)
+        self.G_CI = np.array(G_CI_arr)
+        self.G_PE = np.array(G_PE_arr)
+
         self.Zd = Zd
         self.Av = self.NH * Zd/1.87e21
         self.nHM, self.NHM = np.meshgrid(self.nH, self.NH)

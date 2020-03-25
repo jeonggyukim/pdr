@@ -48,13 +48,13 @@ int main() {
   //radiation field: 0: beamed/plane-parallel,
   //1: Isotropic approximation/plane-parallel with 60 degrees incident angle
   //2: Isotropic
-  const int field_geo = 0; 
+  const int field_geo = 1; 
 
   //set up densities of a series of PDR
 	const double nH_first = 100;
 	const double nH_last = 1.2e3;
 	const double nH_fac = 10;
-	//const double nH2G0 = 94. / ( 1. + 3.1*pow(Zdg, 0.365) ); /*nH/G0 constant in CNM*/
+	//const double nH2G0 = 94. / ( 1. + 3.1*pow(Zdg, 0.365) ); /*nH/G0 aconstanat in CNM*/
 	long int slab_id = 0;
   //output directory. Note this should be the same as that in examples.in
 	const char dir[] = "../out_example_simple/";
@@ -159,14 +159,41 @@ int main() {
 		myslab->WriteThermoRates(pf_thermo);
 		fclose(pf_thermo);
 		delete [] file_thermo;
-
+		/*write CO shielding factor */
+		char *file_G_CO = new char[100];
+		sprintf(file_G_CO, "%sG_CO%06ld.dat", dir, slab_id);
+		FILE *pf_G_CO = fopen(file_G_CO, "w+");
+		myslab->WriteG_CO(pf_G_CO);
+                fclose(pf_G_CO);
+		delete [] file_G_CO;
+		/*write H2 shielding factor */
+		char *file_G_H2 = new char[100];
+		sprintf(file_G_H2, "%sG_H2%06ld.dat", dir, slab_id);
+		FILE *pf_G_H2 = fopen(file_G_H2, "w+");
+		myslab->WriteG_H2(pf_G_H2);
+                fclose(pf_G_H2);
+		delete [] file_G_H2;
+		/*write CI shielding factor */
+		char *file_G_CI = new char[100];
+		sprintf(file_G_CI, "%sG_CI%06ld.dat", dir, slab_id);
+		FILE *pf_G_CI = fopen(file_G_CI, "w+");
+		myslab->WriteG_CI(pf_G_CI);
+                fclose(pf_G_CI);
+		delete [] file_G_CI;
+		/*write radiation for photoelectric heating */
+		char *file_G_PE = new char[100];
+		sprintf(file_G_PE, "%sG_PE%06ld.dat", dir, slab_id);
+		FILE *pf_G_PE = fopen(file_G_PE, "w+");
+		myslab->WriteG_PE(pf_G_PE);
+                fclose(pf_G_PE);
+		delete [] file_G_PE;
+                
     if (isWriteNH) {
       FILE *pf_colH = fopen(fn_colH, "w+");
       myslab->WriteNH(pf_colH);
       fclose(pf_colH);
       isWriteNH = false;
     }
-
 		delete myslab;
 		slab_id++;
 	}

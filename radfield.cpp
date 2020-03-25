@@ -57,16 +57,22 @@ void RadField::Beamed(const long int igrid, const double NH,
   if (isfsCO_) {
     fs_CO_ = Shielding::fShield_CO_V09(NCO, NH2);
     Gph[igrid][gow17::iph_CO_] *= fs_CO_;
+    // For output, save overall (dust + self) shielding factor to fs
+    fs_CO_ = Gph[igrid][gow17::iph_CO_];
   }
   /*self-shielding of CI, CI shielding of CO*/
   if (isfsC_) {
     fs_C_ = Shielding::fShield_C(NC, NH2);
     Gph[igrid][gow17::iph_C_] *= fs_C_;
+    // For output, save overall (dust + self) shielding factor to fs
+    fs_C_ = Gph[igrid][gow17::iph_C_];
   }
   /*self-shielding of H2*/
   if (isfsH2_) {
     fs_H2_ = Shielding::fShield_H2(NH2, bH2_);
     Gph[igrid][gow17::iph_H2_] *= fs_H2_;
+    // For output, save overall (dust + self) shielding factor to fs
+    fs_H2_ = Gph[igrid][gow17::iph_H2_];
   }
 
   /*debug*/
@@ -167,4 +173,8 @@ double RadField::GetfShieldH2mol() {
 
 double RadField::GetfShieldCOmol() {
   return fs_CO_;
+}
+
+double RadField::GetfShieldCI() {
+  return fs_C_;
 }

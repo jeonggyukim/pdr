@@ -29,9 +29,11 @@ class Slab {
 		/*Output abundances to file, ngrid line, dimen column*/
 		void WriteAbd(FILE *pf);
 		/*Output array of H2 self sheilding factor*/
-		void WritefShieldH2mol(FILE *pf);
+		void WriteG_H2(FILE *pf);
 		/*Output array of CO sheilding factor by CO and H2*/
-		void WritefShieldCOmol(FILE *pf);
+		void WriteG_CO(FILE *pf);
+		void WriteG_CI(FILE *pf);
+		void WriteG_PE(FILE *pf);
     /* Output array of NH*/
     void WriteNH(FILE *pf);
 		/*Output parameter array to file*/
@@ -56,10 +58,13 @@ class Slab {
 		double **yE_; /*heating and cooling processes*/
 		double *fShieldH2mol_;
 		double *fShieldCOmol_;
+		double *fShieldCI_;
 		double *hLast_;
 		double *tSolve_;
 		double *nstepLast_;
 		double *NH_arr_;
+		double *GPE_arr_;
+		double *GCO_arr_;
 		/*calculate with/without dust/self sheilding*/
     const double G0_;
     /*whether we use logarithm spacing for NH and what is the minimum if so*/

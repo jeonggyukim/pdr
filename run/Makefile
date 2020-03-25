@@ -1,0 +1,52 @@
+prob = example_simple.cpp
+exe = example_simple.exe
+cvode_dir = /tigress/jk11/local
+SHELL = /bin/sh
+
+exec_prefix  = $(cvode_dir)
+includedir   = $(cvode_dir)/include
+libdir       = $(exec_prefix)/lib64
+sourcedir    = $(shell dirname $$PWD)/
+
+CPP      = g++
+#CFLAGS = -Wall -g3 -O0 -ggdb
+CFLAGS = -Wall -O3
+LIBS     = -lm 
+
+INCLUDES = -I$(includedir) -I$(sourcedir)
+LIBRARIES = -lsundials_cvode -lsundials_nvecserial $(LIBS)
+LINKFLAGS = -Wl,-rpath,$(libdir)
+
+#source files
+SUNDIAL_FUN = $(sourcedir)sundial.cpp
+SOLVERS = $(sourcedir)cvodeDense.cpp
+ODE_base = $(sourcedir)ode.cpp 
+ODE_gow17 = $(ODE_base) $(sourcedir)gow17.cpp $(sourcedir)shielding.cpp $(sourcedir)thermo.cpp $(sourcedir)interp.cpp
+SRCS_slab_grid = $(prob) $(ODE_gow17) $(sourcedir)slab.cpp $(sourcedir)radfield.cpp $(SOLVERS) $(SUNDIAL_FUN)
+
+#object files
+OBJS_slab_grid = $(SRCS_slab_grid:.cpp=.o)
+
+#executable
+PROJ_slab_grid = $(exe)
+
+# -----------------------------------------------------------------------------------------
+
+.PHONY: depend clean
+
+all: $(PROJ_slab_grid)
+
+$(PROJ_slab_grid): $(OBJS_slab_grid)
+	$(CPP) -o $@ $^ $(CFLAGS) -L$(libdir) $(LIBRARIES) $(LINKFLAGS)
+
+.cpp.o:
+	$(CPP) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	$(RM) *.o ../*.o
+	$(RM) .depend
+	$(RM) *.exe
+
+depend: $(SRCS_slab_grid)
+	makedepend $(INCLUDES) $^
+# -----------------------------------------------------------------------------------------

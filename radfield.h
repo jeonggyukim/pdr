@@ -44,6 +44,7 @@ class RadField {
     /*return self-sheilding factors*/
     double GetfShieldH2mol();
     double GetfShieldCOmol();
+    double GetfShieldCI();
   private:
     const double ngrid_;
     const double G0_; /* radiation field at boundary*/
