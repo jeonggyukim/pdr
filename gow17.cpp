@@ -510,7 +510,11 @@ void gow17::ChemInit_(const double *y) {
 
 	/*cosmic ray reactions*/
 	for (int i=0; i<n_cr_; i++) {
-		kcr_[i] = kcr_base_[i] * ion_rate_;
+          if (NH_ > 9.35e20) {
+            kcr_[i] = kcr_base_[i] * ion_rate_ * (9.35e20/NH_);
+          } else {
+            kcr_[i] = kcr_base_[i] * ion_rate_;
+          }
 	}
   /*cosmic ray induced photo-reactions, proportional to x(H2)*/
   /*(3) cr + *C -> C+ + *e     --including direct and cr induce photo reactions 
