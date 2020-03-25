@@ -1,6 +1,6 @@
 #include "slab.h"
 
-Slab::Slab(NL99p &ode, CvodeDense &solver,
+Slab::Slab(gow17 &ode, CvodeDense &solver,
 		       const long int ngrid, const double NH_total,
            const double G0, const double Zd,
            const bool logNH, const double NH_min)
@@ -26,14 +26,18 @@ Slab::Slab(NL99p &ode, CvodeDense &solver,
 	t_ = ode.GetTime();
 	fShieldH2mol_ = new double [ngrid_];
 	fShieldCOmol_ = new double [ngrid_];
+	fShieldCI_ = new double [ngrid_];
 	hLast_ = new double [ngrid_];
 	tSolve_ = new double [ngrid_];
 	nstepLast_ = new double [ngrid_];
 	NH_arr_ = new double [ngrid_];
+        GPE_arr_ = new double [ngrid_];
+        GCO_arr_ = new double [ngrid_];
 	for (int i=0; i<ngrid_; i++) {
 		ode.CopyAbd(y_[i]);
 		fShieldH2mol_[i] = 0.;
 		fShieldCOmol_[i] = 0.;
+		fShieldCI_[i] = 0.;
 	}
 	/*initialize yE_*/
 	for (int i=0; i<ngrid_; i++) {
@@ -52,10 +56,13 @@ Slab::~Slab() {
 	delete [] yE_;
 	delete [] fShieldH2mol_;
 	delete [] fShieldCOmol_;
+	delete [] fShieldCI_;
 	delete [] hLast_;
 	delete [] tSolve_;
 	delete [] nstepLast_;
 	delete [] NH_arr_;
+	delete [] GPE_arr_;
+	delete [] GCO_arr_;
   delete prad_;
 }
 
@@ -128,6 +135,7 @@ void Slab::SolveEq(const double tolfac, const double tmin,
     /*get sheilding factor*/
 		fShieldH2mol_[i] = prad_->GetfShieldH2mol();
 		fShieldCOmol_[i] = prad_->GetfShieldCOmol();
+		fShieldCI_[i] = prad_->GetfShieldCI();
     /*solve to equalibrium*/
 		solver_.SolveEq(tolfac, tmax, verbose, tmin);
 		ode_.CopyAbd(y_[i]);
@@ -143,19 +151,38 @@ void Slab::SolveEq(const double tolfac, const double tmin,
 		if (pf_rates != NULL) {
 			ode_.WriteRates(pf_rates);
 		}
+                GPE_arr_[i] = *(prad_->GPE + i);
+                GCO_arr_[i] = fShieldCOmol_[i];
+
 	}
+        
 }
 
-void Slab::WritefShieldH2mol(FILE *pf) {
+void Slab::WriteG_H2(FILE *pf) {
 	for (int i=0; i<ngrid_; i++) {
 		fprintf(pf, "%12.4e  ", fShieldH2mol_[i]);
 	}
 	fprintf(pf, "\n");
 }
 
-void Slab::WritefShieldCOmol(FILE *pf) {
+void Slab::WriteG_CO(FILE *pf) {
 	for (int i=0; i<ngrid_; i++) {
 		fprintf(pf, "%12.4e  ", fShieldCOmol_[i]);
+	}
+	fprintf(pf, "\n");
+}
+
+void Slab::WriteG_CI(FILE *pf) {
+	for (int i=0; i<ngrid_; i++) {
+		fprintf(pf, "%12.4e  ", fShieldCI_[i]);
+	}
+	fprintf(pf, "\n");
+}
+
+
+void Slab::WriteG_PE(FILE *pf) {
+	for (int i=0; i<ngrid_; i++) {
+		fprintf(pf, "%12.4e  ", GPE_arr_[i]);
 	}
 	fprintf(pf, "\n");
 }

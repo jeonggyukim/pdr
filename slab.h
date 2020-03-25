@@ -1,18 +1,18 @@
 /*Date: June 2, 2015, Author: Munan Gong
  * Grid of a plane-parallel slab.
- * TODO: implement both beamed and isotropic radiation.
  */
 
 #ifndef SLAB_H_
 #define SLAB_H_
 
-#include "NL99p.h"
+#include "gow17.h"
 #include "cvodeDense.h"
 #include <stdio.h>
 
 class Slab {
+  friend class CoolingFunction;
 	public:
-		Slab(NL99p &ode, CvodeDense &solver,
+		Slab(gow17 &ode, CvodeDense &solver,
 				 const long int ngrid, const double NH_total, const double G0,
          const double Zd, const bool logNH=false, const double NH_min=1.0e18);
 		~Slab();
@@ -29,9 +29,11 @@ class Slab {
 		/*Output abundances to file, ngrid line, dimen column*/
 		void WriteAbd(FILE *pf);
 		/*Output array of H2 self sheilding factor*/
-		void WritefShieldH2mol(FILE *pf);
+		void WriteG_H2(FILE *pf);
 		/*Output array of CO sheilding factor by CO and H2*/
-		void WritefShieldCOmol(FILE *pf);
+		void WriteG_CO(FILE *pf);
+		void WriteG_CI(FILE *pf);
+		void WriteG_PE(FILE *pf);
     /* Output array of NH*/
     void WriteNH(FILE *pf);
 		/*Output parameter array to file*/
@@ -42,9 +44,7 @@ class Slab {
     void SetFieldGeo(int field_geo);
 
 	private:
-		/*TODO: think about new data structure of only have one ode system,
-		 * but store chemical species in an array that belongs to the grid*/
-		NL99p &ode_;
+		gow17 &ode_;
 		CvodeDense &solver_;
     RadField *prad_;
 		const int dimen_; /*dimention of ode*/
@@ -58,10 +58,13 @@ class Slab {
 		double **yE_; /*heating and cooling processes*/
 		double *fShieldH2mol_;
 		double *fShieldCOmol_;
+		double *fShieldCI_;
 		double *hLast_;
 		double *tSolve_;
 		double *nstepLast_;
 		double *NH_arr_;
+		double *GPE_arr_;
+		double *GCO_arr_;
 		/*calculate with/without dust/self sheilding*/
     const double G0_;
     /*whether we use logarithm spacing for NH and what is the minimum if so*/

@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
 
 #reactions for one species formation/destruction
 def GetReaction(reaction_list, spec):
@@ -23,7 +22,7 @@ def GetNi(NH_arr, xi_arr):
         raise Exception("GetNi: array shape doesn't match.")
     Ni = np.zeros(NH_arr.shape)
     Ni[0]  = xi_arr[0] * NH_arr[0]
-    for i in xrange(1, len(Ni)):
+    for i in np.arange(1, len(Ni)):
         Ni[i] = Ni[i-1] + xi_arr[i] * (NH_arr[i] - NH_arr[i-1])
     return Ni
 
@@ -33,8 +32,8 @@ def checkabd(slab):
     Stot = (slab.abd["S"] + slab.abd["S+"])[0,0]
     Sitot = (slab.abd["Si"] + slab.abd["Si+"])[0,0]
     PAHtot = slab.abd["PAHtotal"][0, 0]
-    print "Ctot={:.2e}, Otot={:.2e}, Stot={:.2e}, Sitot={:.2e}, PAHtot={:.2e}".format(
-        Ctot, Otot, Stot, Sitot, PAHtot)
+    print("Ctot={:.2e}, Otot={:.2e}, Stot={:.2e}, Sitot={:.2e}, PAHtot={:.2e}".format(
+        Ctot, Otot, Stot, Sitot, PAHtot))
     return
 
 def plot_Ntrans_BS16(ax):
@@ -54,11 +53,6 @@ def Get_xOH_BS15(xi_H, n, x_O, x_e, Z):
     return (xi_2/n/1e-16) * (1 + 0.27*x_O/x_e) / Z
 
 def plot_contour(plotslabs, linestyles=["-", "--", ":"], figname_end="", savefig=True, plot_BS16=False):
-    font = {'family' : 'normal',
-            'weight' : 'normal',
-            'size'   : 20}
-    matplotlib.rc('font', **font)
-    matplotlib.rcParams['lines.linewidth'] = 3.2
     plot_spec_list=["CO2Ctot", "C+2Ctot", "2H2"]
     plot_label=["$x(\mathrm{CO})/x(\mathrm{C_{tot}})$", "$x(\mathrm{C^+})/x(\mathrm{C_{tot}})$", 
                 "$2x(\mathrm{H_2})$"]
@@ -68,8 +62,8 @@ def plot_contour(plotslabs, linestyles=["-", "--", ":"], figname_end="", savefig
     level = 0.5
     fig=plt.figure(figsize=[10,8])
     ax = fig.add_subplot(111)
-    for islab in xrange(len(plotslabs)):
-        for i in xrange(len(plot_spec_list)):
+    for islab in np.arange(len(plotslabs)):
+        for i in np.arange(len(plot_spec_list)):
             CS1 = ax.contour(plotslabs[islab].NHM, plotslabs[islab].nHM, plotslabs[islab].abd[plot_spec_list[i]], 
                              [level], colors=colors[i], linestyles=linestyles[islab])
             if linestyles[islab] == "--":
@@ -110,11 +104,6 @@ def plot_contour(plotslabs, linestyles=["-", "--", ":"], figname_end="", savefig
 def plot_xi_simple(plot_slabs, linestyles=["-", "--", ":"], figname_end="", savefig=True, plot_nH_arr=[100, 1000], Z=1.,
                    plot_xOH_BS15=False, xi_H_arr=None):
     #plot in results, aboundances, cr rate 2e-16
-    font = {'family' : 'normal',
-            'weight' : 'normal',
-            'size'   : 24}
-    matplotlib.rc('font', **font)
-    matplotlib.rcParams['lines.linewidth'] = 3.2
     fig_dir = "/Users/munangong/chemistry_Athena/draft_chemistry/"
 
     if "TTB" in figname_end:
@@ -126,12 +115,12 @@ def plot_xi_simple(plot_slabs, linestyles=["-", "--", ":"], figname_end="", save
     colors = ["m", "r", "y", "g", "b", "cyan", "k", "gray"]
     indxs = np.arange(len(plot_spec_list))
 
-    for inH in xrange(len(plot_nH_arr)):
+    for inH in np.arange(len(plot_nH_arr)):
         plot_nH = int(plot_nH_arr[inH])
         figname = "species" +figname_end + "_nH"+str(plot_nH)
         fig=plt.figure(figsize=[10,11])
         ax = fig.add_subplot(111)
-        for islab in xrange(len(plot_slabs)):
+        for islab in np.arange(len(plot_slabs)):
             for s,i in zip(plot_spec_list, indxs):
                 if islab == 0:
                     slabel = plot_spec_label[i]
@@ -168,19 +157,14 @@ def plot_xi_simple(plot_slabs, linestyles=["-", "--", ":"], figname_end="", save
             x_e = plot_slabs[islab].GetAbd("e", nH=plot_nH, NH=1e22/Z)
             xOH_BS15 = Get_xOH_BS15(xi_H_arr[inH], float(plot_nH), x_O, x_e, Z)
             ax.plot(1e22/Z, xOH_BS15, "b*", ms=10, linestyle="None")
-            print "nH={}, x_O={}, x_e={}, xOH_BS15={}".format(plot_nH, x_O, x_e, xOH_BS15)
+            print("nH={}, x_O={}, x_e={}, xOH_BS15={}".format(plot_nH, x_O,
+                x_e, xOH_BS15))
         fig.tight_layout()
         if savefig:
             fig.savefig(fig_dir + figname + ".pdf")
     return
             
 def plot_Ni_simple(plot_slabs, linestyles=["-", "--", ":"], figname_end="", savefig=True, plot_nH_arr=[100, 1000]):           
-    #Ni in results, cr rate 2e-16
-    font = {'family' : 'normal',
-            'weight' : 'normal',
-            'size'   : 24}
-    matplotlib.rc('font', **font)
-    matplotlib.rcParams['lines.linewidth'] = 3.2
     fig_dir = "/Users/munangong/chemistry_Athena/draft_chemistry/"
 
     plot_spec_list=["CO", "C", "C+", "H3+", "OHx", "CHx", "He+"]
@@ -193,7 +177,7 @@ def plot_Ni_simple(plot_slabs, linestyles=["-", "--", ":"], figname_end="", save
         figname = "Ni" +figname_end + "_nH"+str(plot_nH)
         fig=plt.figure(figsize=[10,11])
         ax = fig.add_subplot(111)
-        for islab in xrange(len(plot_slabs)):
+        for islab in np.arange(len(plot_slabs)):
             for s,i in zip(plot_spec_list, np.arange(len(plot_spec_list))):
                 if islab == 0:
                     slabel = plot_spec_label[i]
@@ -230,11 +214,6 @@ def plot_Ni_simple(plot_slabs, linestyles=["-", "--", ":"], figname_end="", save
             
 #all species in appendix
 def Plot_xi(plot_slabs, plot_nH_arr, Zd, figname_end="", savefig=False, linestyles=["-", "--", ":"]):
-    font = {'family' : 'normal',
-            'weight' : 'normal',
-            'size'   : 18}
-    matplotlib.rc('font', **font)
-    matplotlib.rcParams['lines.linewidth'] = 2.2
     fig_dir = "/Users/munangong/chemistry_Athena/draft_chemistry/"
 
     if "OH" in figname_end:
@@ -260,7 +239,7 @@ def Plot_xi(plot_slabs, plot_nH_arr, Zd, figname_end="", savefig=False, linestyl
         fig=plt.figure(figsize=[20,8])
         ax = fig.add_subplot(121)
         ax2 = fig.add_subplot(122)
-        for islab in xrange(len(plot_slabs)):
+        for islab in np.arange(len(plot_slabs)):
             for s,i in zip(plot_spec_list, np.arange(len(plot_spec_list))):
                 if islab == 0:
                     slabel = plot_spec_label[i]
@@ -340,11 +319,6 @@ def Plot_xi(plot_slabs, plot_nH_arr, Zd, figname_end="", savefig=False, linestyl
 
 #all Ni in appendix
 def Plot_Ni(plot_slabs, plot_nH_arr, Zd, figname_end="", savefig=True):
-    font = {'family' : 'normal',
-            'weight' : 'normal',
-            'size'   : 20}
-    matplotlib.rc('font', **font)
-    matplotlib.rcParams['lines.linewidth'] = 2.2
     linestyles = ["-", "--", ":"]
     fig_dir = "/Users/munangong/chemistry_Athena/draft_chemistry/"
 
@@ -370,7 +344,7 @@ def Plot_Ni(plot_slabs, plot_nH_arr, Zd, figname_end="", savefig=True):
         fig=plt.figure(figsize=[20,8])
         ax = fig.add_subplot(121)
         ax2 = fig.add_subplot(122)
-        for islab in xrange(len(plot_slabs)):
+        for islab in np.arange(len(plot_slabs)):
             for s,i in zip(plot_spec_list, np.arange(len(plot_spec_list))):
                 if islab == 0:
                     slabel = plot_spec_label[i]
@@ -444,3 +418,181 @@ def Plot_Ni(plot_slabs, plot_nH_arr, Zd, figname_end="", savefig=True):
         fig.tight_layout()
         if savefig:
             fig.savefig(fig_dir + figname + ".pdf")
+
+def plot_rates_nH(slab, nH, rate_spec, abd_spec=None, fig_size_factor=1.):
+    if abd_spec is None:
+        abd_spec = rate_spec
+    rates_list_plot = slab.rates_list
+    crates, drates = GetReaction(rates_list_plot, rate_spec)
+    fig=plt.figure(figsize=[8*fig_size_factor,5.5*fig_size_factor])
+    ax = fig.add_subplot(111)
+    linestyles = ["-", "--", "-.", ":"]
+    color_c = ["r", "orange", "yellow", "m"]
+    color_d = ["b", "cyan", "g", "gray"]
+
+    li=0
+    ci = 0
+    for r in crates:
+        try:
+            ax.plot(slab.NH, slab.GetAbd(r, nH=nH), 
+                    label=r, color=color_c[ci], linestyle=linestyles[li],
+                    linewidth=3)
+        except KeyError:
+            pass
+        li += 1
+        if li == 4:
+            li=0
+            ci += 1
+
+    li=0
+    ci = 0
+    for r in drates:
+        try:
+            ax.plot(slab.NH, slab.GetAbd(r, nH=nH), 
+                    label=r, color=color_d[ci], linestyle=linestyles[li],
+                    linewidth=1.5)
+        except KeyError:
+            pass
+        li += 1
+        if li == 4:
+            li=0
+            ci += 1
+
+    ax.set_xlim([1e19, 1e22]);
+    ax2 = ax.twinx()
+    try:
+        ax2.plot(slab.NH, slab.GetAbd(abd_spec, nH=nH), color="k", linestyle="-")
+    except KeyError:
+        pass
+    ax.set_xscale("log")
+    ax2.set_xscale("log")
+    ax.set_yscale("log")
+    ax2.set_yscale("log")
+    ax.set_ylim([1e-25, 1e-10])
+    ax2.set_xlim([1e19/slab.Zd, 1e22/slab.Zd]);
+    ax.legend(fontsize=10)
+    ax.set_xlabel("$N_H/cm^{-2}$")
+    ax.set_ylabel("rates / $s^{-1}$")
+    ax2.set_ylabel("x({})".format(abd_spec))
+
+    ax3 = ax2.twiny()
+    ax3.set_xlim(np.array(ax2.get_xlim())/1.87e21*slab.Zd)
+    ax3.set_xscale(ax2.get_xscale())
+    ax3.set_xlabel("Av")
+    ax.xaxis.set_ticks_position('bottom')
+
+    ax.set_title(rate_spec+" reactions, nH={:.1f}\n\n\n".format(nH), fontsize=10)
+    return
+
+def plot_rates_NH(slab, NH, rate_spec, abd_spec=None, fig_size_factor=1.):
+    if abd_spec is None:
+        abd_spec = rate_spec
+    rates_list_plot = slab.rates_list
+    crates, drates = GetReaction(rates_list_plot, rate_spec)
+    fig=plt.figure(figsize=[8*fig_size_factor,6*fig_size_factor])
+    ax = fig.add_subplot(111)
+    linestyles = ["-", "--", "-.", ":"]
+    color_c = ["r", "orange", "yellow", "m"]
+    color_d = ["b", "cyan", "g", "gray"]
+
+    li=0
+    ci = 0
+    for r in crates:
+        try:
+            ax.plot(slab.nH, slab.GetAbd(r, NH=NH), 
+                    label=r, color=color_c[ci], linestyle=linestyles[li],
+                    linewidth=3)
+        except KeyError:
+            pass
+        li += 1
+        if li == 4:
+            li=0
+            ci += 1
+
+    li=0
+    ci = 0
+    for r in drates:
+        try:
+            ax.plot(slab.nH, slab.GetAbd(r, NH=NH), 
+                    label=r, color=color_d[ci], linestyle=linestyles[li],
+                    linewidth=1.5)
+        except KeyError:
+            pass
+        li += 1
+        if li == 4:
+            li=0
+            ci += 1
+
+    ax.set_xlim([1e19, 1e22]);
+    ax2 = ax.twinx()
+    try:
+        ax2.plot(slab.nH, slab.GetAbd(abd_spec, NH=NH), color="k", linestyle="-")
+    except KeyError:
+        pass
+    ax.set_xscale("log")
+    ax2.set_xscale("log")
+    ax.set_yscale("log")
+    ax2.set_yscale("log")
+    ax.set_ylim([1e-25, 1e-10])
+    ax2.set_xlim([slab.nH[0], slab.nH[-1]]);
+    ax.legend(fontsize=10)
+    ax.set_xlabel("$n_H/cm^{-3}$")
+    ax.set_ylabel("rates / $s^{-1}$")
+    ax2.set_ylabel("x({})".format(abd_spec))
+    ax.set_title(rate_spec+" reactions, NH={:.1e}\n".format(NH), fontsize=10)
+    return ax
+
+def plot_thermo_nH(ax, plot_slab, plot_nH,linestyle="-", label="", plot_unimportant = False, plot_legend=True):
+    #important heating processes:
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("GPE", nH=plot_nH), color="orange", linestyle=linestyle, label="GPE, "+label)
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("GCR", nH=plot_nH), color="m", linestyle=linestyle, label="GCR")
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("Gtotal", nH=plot_nH), color="r", linestyle=linestyle, label="Gtotal", 
+            linewidth=4)
+    #important cooling processes:
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("LLya", nH=plot_nH), color="g",linestyle=linestyle, label="LLya")
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("LRec", nH=plot_nH), color="navy", linestyle=linestyle, label="LRec")
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("LOI", nH=plot_nH), color="lightblue", linestyle=linestyle, label="LOI")  
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("LCII", nH=plot_nH), color="cyan", linestyle=linestyle, label="LCII")
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("LCI", nH=plot_nH), color="olive", linestyle=linestyle, label="LCI")
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("LCOR", nH=plot_nH), color="lawngreen", linestyle=linestyle, label="LCOR")
+    ax.plot(plot_slab.NH, plot_slab.GetAbd("Ltotal", nH=plot_nH), color="b", linestyle=linestyle, label="Ltotal", 
+            linewidth=2.5)
+    #unimportant processes:
+    if plot_unimportant:
+        ax.plot(plot_slab.NH, plot_slab.GetAbd("GH2diss", nH=plot_nH), color="y", linestyle="-", label="GH2diss")
+        ax.plot(plot_slab.NH, plot_slab.GetAbd("GH2pump", nH=plot_nH), color="chocolate", linestyle="-", label="GH2pump")
+        ax.plot(plot_slab.NH, plot_slab.GetAbd("GH2gr", nH=plot_nH), color="pink", linestyle="-", label="GH2gr")
+        ax.plot(plot_slab.NH, plot_slab.GetAbd("LH2", nH=plot_nH), color="yellowgreen", linestyle="-", label="LH2")
+        ax.plot(plot_slab.NH, plot_slab.GetAbd("LDust", nH=plot_nH), color="skyblue", linestyle="-", label="LDust")
+        ax.plot(plot_slab.NH, plot_slab.GetAbd("LH2diss", nH=plot_nH), color="turquoise", linestyle="-", label="LH2diss")
+        ax.plot(plot_slab.NH, plot_slab.GetAbd("LHIion", nH=plot_nH), color="indigo", linestyle="-", label="LHIion")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_ylim([1e-30, 1e-23])
+    ax.set_xlim([plot_slab.NH[0], plot_slab.NH[-1]])
+    ax2 = ax.twinx()
+    ax2.plot(plot_slab.NH, plot_slab.GetAbd("T", nH=plot_nH)/100, color="k",
+            linestyle=linestyle, label="T/100", linewidth=4)
+    ax2.plot(plot_slab.NH, plot_slab.GetAbd("e", nH=plot_nH), color="k", linestyle=linestyle, label="e",
+            linewidth=2)
+    ax2.plot(plot_slab.NH, plot_slab.GetAbd("H", nH=plot_nH), color="silver", linestyle=linestyle, label="H", 
+            linewidth=3)
+    ax2.plot(plot_slab.NH, plot_slab.GetAbd("H2", nH=plot_nH)*2, color="brown", linestyle=linestyle, label="2H2", 
+            linewidth=1.5)
+    ax2.plot(plot_slab.NH, plot_slab.GetAbd("C2Ctot", nH=plot_nH), color="gray", linestyle=linestyle,
+            label="C/Ctot",linewidth=2)
+    ax2.plot(plot_slab.NH, plot_slab.GetAbd("CO2Ctot", nH=plot_nH), color="brown", linestyle=linestyle,
+            label="CO/Ctot", linewidth=3)
+   
+    ax2.set_yscale("log")
+    ax2.set_xscale("log")
+    ax2.set_ylim([1e-4, 2])
+    ax2.set_xlim([plot_slab.NH[0], plot_slab.NH[-1]])
+    if plot_legend:
+        ax.legend(fontsize=10, loc=3)
+        ax2.legend(fontsize=10, loc=2)
+    ax.set_xlabel("$N_H/cm^{-2}$")
+    ax2.set_ylabel("$T2, 2x_{H_2}, x_{CO}/x_{Ctot}, x_{C^+}/x_{Ctot}$")
+    ax.set_ylabel("$\Lambda(\Gamma) / \mathrm{erg^{}s^{-1}H^{-1}}$")
+    ax.set_title("Heating and cooling, nH={:.1f}".format(plot_nH), fontsize=10)
+    return
