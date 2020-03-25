@@ -7,7 +7,7 @@ import time
 
 #read KLM.in file
 
-cvode_dir  = "/usr/local/sundials"
+cvode_dir  = "/tigress/jk11/local"
 input_file = "examples.in"
 dir_out = os.path.dirname(os.getcwd()) + "/"
 
