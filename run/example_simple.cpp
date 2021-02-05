@@ -22,7 +22,7 @@ int main() {
 	double nH = 0; //density variable
 	double G0 = 0; //radiation field variable
 
-	const long int ngrid = 2e3; //number of grids
+	const long int ngrid = 3e3; //number of grids
 	const double tolfac = 1e-1 / reltol; // tolerance for equilibrium
   //maximum time in seconds for the chemical evolution
 	const double tmax = 2000 * 1e6 * 3.16e7; 
@@ -42,7 +42,7 @@ int main() {
   //minimum column of the PDR
 	const double NH_min = 1.0e17/Zdg;
   //maximum column of the PDR
-	const double NH_total = 1.0e22/Zdg;
+	const double NH_total = 3.0e22/Zdg;
   //logarithmically or linearly spaced grid
   const bool islogNH = true;
   //radiation field: 0: beamed/plane-parallel,
@@ -52,7 +52,7 @@ int main() {
 
   //set up densities of a series of PDR
 	const double nH_first = 100;
-	const double nH_last = 1.2e3;
+	const double nH_last = 1.2e5;
 	const double nH_fac = 10;
 	//const double nH2G0 = 94. / ( 1. + 3.1*pow(Zdg, 0.365) ); /*nH/G0 aconstanat in CNM*/
 	long int slab_id = 0;
